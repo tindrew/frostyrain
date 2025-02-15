@@ -4,12 +4,19 @@ import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
-import static java.lang.invoke.MethodHandles.loop;
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 
+/**
+ * The Window class is a singleton responsible for managing a window
+ * that utilizes the LWJGL library for OpenGL rendering.
+ * It provides methods for initialization and the main event loop to manage
+ * the application's graphical interface.
+ * The Window is designed to have only one instance during the application's lifetime.
+ */
 public class Window {
    private int width, height;
    private String title;
@@ -38,6 +45,14 @@ public class Window {
 
         init();
         loop();
+
+        // Free the memory
+        glfwFreeCallbacks(glfwWindow);
+        glfwDestroyWindow(glfwWindow);
+
+        // Terminate GFW and free the error callback
+        glfwTerminate();
+        glfwSetErrorCallback(null).free();
     }
 
     public void init() {
@@ -61,6 +76,14 @@ public class Window {
             throw new IllegalStateException(("Failed to create the GLFW window"));
         }
 
+        // Registers callback functions to handle different mouse events for the specified GLFW window.
+// - `glfwSetCursorPosCallback`: Sets the callback for mouse movement, linking it to the `mousePosCallback` method in MouseListener.
+// - `glfwSetMouseButtonCallback`: Sets the callback for mouse button actions (press/release), linking it to the `mouseButtonCallback` method in MouseListener.
+// - `glfwSetScrollCallback`: Sets the callback for mouse scroll events, linking it to the `mouseScrollCallback` method in MouseListener.
+        glfwSetCursorPosCallback(glfwWindow, MouseListener::mousePosCallback);
+        glfwSetMouseButtonCallback(glfwWindow, MouseListener::mouseButtonCallback);
+        glfwSetScrollCallback(glfwWindow, MouseListener::mouseScrollCallback);
+        glfwSetKeyCallback(glfwWindow, KeyListener::keyCallback);
         // Make the OpenGL context current
         glfwMakeContextCurrent(glfwWindow);
         // Enable v-sync
@@ -84,6 +107,11 @@ public class Window {
 
             glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
+
+            if (KeyListener.isKeyPressed(GLFW_KEY_SPACE)) {
+                System.out.println("Space key is pressed");
+            }
+
 
             glfwSwapBuffers(glfwWindow);
         }
