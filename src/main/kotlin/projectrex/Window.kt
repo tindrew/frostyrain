@@ -1,5 +1,6 @@
 package projectrex
 
+
 import org.lwjgl.Version
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWErrorCallback
@@ -30,7 +31,6 @@ class Window {
             return window!!
         }
     }
-
 
     fun run() {
         println("Hello LWJGL" + Version.getVersion() + "!")
@@ -68,6 +68,11 @@ class Window {
             throw IllegalStateException("Failed to initialize GLFW Window")
         }
 
+        glfwSetCursorPosCallback(glfwWindow, MouseListener()::mousePosCallback)
+        glfwSetMouseButtonCallback(glfwWindow, MouseListener()::mouseButtonCallback)
+        glfwSetScrollCallback(glfwWindow, MouseListener()::mouseScrollCallback)
+        glfwSetKeyCallback(glfwWindow, KeyListener()::keyCallback)
+
         // Make the OpenGL context current
         glfwMakeContextCurrent(glfwWindow)
         // Enable v-sync
@@ -92,6 +97,9 @@ class Window {
             glClearColor(1.0f, 0.0f,0.0f,0.0f)
             glClear(GL_COLOR_BUFFER_BIT)
 
+           if (KeyListener.isKeyPressed(GLFW_KEY_SPACE)) {
+               println("Space key is pressed ")
+           }
             glfwSwapBuffers(glfwWindow)
         }
     }

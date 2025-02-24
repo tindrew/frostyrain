@@ -5,7 +5,7 @@ import org.lwjgl.glfw.GLFW.GLFW_RELEASE
 
 // Class MouseListener. In Kotlin, constructors are combined with class setup,
 // which is why there's a weird "private constructor()" after class declaration.
-class MouseListener private constructor() {
+class MouseListener {
     private var scrollX: Double? = 0.0
     private var scrollY: Double? = 0.0
     private var xPosition: Double? = 0.0
@@ -34,6 +34,7 @@ class MouseListener private constructor() {
         get().lastY = get().yPosition
         get().xPosition = xpos
         get().yPosition = ypos
+        get().isDragging = get().mouseButtonPressed[0] or get().mouseButtonPressed[1] or get().mouseButtonPressed[2]
     }
 
     public fun mouseButtonCallback(window: Long, button: Int, action: Int, mods: Int) {
